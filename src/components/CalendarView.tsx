@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,9 +9,9 @@ const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  // Mock scheduled posts data - enhanced with more details
+  // Mock scheduled posts data - updated to 2025 dates
   const scheduledPosts = {
-    '2024-05-27': [
+    '2025-05-27': [
       { 
         id: 1, 
         time: '18:00', 
@@ -28,7 +27,7 @@ const CalendarView = () => {
         image: '/placeholder.svg'
       }
     ],
-    '2024-05-28': [
+    '2025-05-28': [
       { 
         id: 3, 
         time: '09:00', 
@@ -37,7 +36,7 @@ const CalendarView = () => {
         image: '/placeholder.svg'
       }
     ],
-    '2024-05-30': [
+    '2025-05-30': [
       { 
         id: 4, 
         time: '15:00', 
@@ -53,7 +52,7 @@ const CalendarView = () => {
         image: '/placeholder.svg'
       }
     ],
-    '2024-05-31': [
+    '2025-05-31': [
       { 
         id: 6, 
         time: '12:00', 
@@ -62,11 +61,20 @@ const CalendarView = () => {
         image: '/placeholder.svg'
       }
     ],
-    '2024-06-01': [
+    '2025-06-01': [
       { 
         id: 7, 
         time: '16:00', 
         caption: 'New month, new goals! 🎯 #goals #motivation #june', 
+        status: 'scheduled',
+        image: '/placeholder.svg'
+      }
+    ],
+    '2025-06-05': [
+      { 
+        id: 8, 
+        time: '14:00', 
+        caption: 'Thursday vibes 💪 #thursday #motivation #work', 
         status: 'scheduled',
         image: '/placeholder.svg'
       }
