@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Instagram, Clock, Edit, Trash2, Plus } from 'lucide-react';
+import { Instagram, Clock, Edit, Trash2, Plus, Image, Type } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,16 @@ const PostsList = ({ selectedDate, posts, onAddPost, onEditPost, onDeletePost }:
     caption: '',
     status: 'scheduled'
   });
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const { toast } = useToast();
+
+  const suggestedTimes = [
+    { time: '09:00', label: 'Morning', emoji: '🌅' },
+    { time: '12:00', label: 'Lunch', emoji: '🌞' },
+    { time: '18:00', label: 'Evening', emoji: '🌆' },
+    { time: '21:00', label: 'Night', emoji: '🌙' }
+  ];
 
   const resetForm = () => {
     setFormData({
@@ -43,6 +52,20 @@ const PostsList = ({ selectedDate, posts, onAddPost, onEditPost, onDeletePost }:
       caption: '',
       status: 'scheduled'
     });
+    setImage(null);
+    setImagePreview('');
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAddPost = () => {
@@ -59,7 +82,7 @@ const PostsList = ({ selectedDate, posts, onAddPost, onEditPost, onDeletePost }:
       time: formData.time,
       caption: formData.caption,
       status: formData.status,
-      image: '/placeholder.svg'
+      image: imagePreview || '/placeholder.svg'
     }, selectedDate);
 
     toast({
@@ -144,33 +167,174 @@ const PostsList = ({ selectedDate, posts, onAddPost, onEditPost, onDeletePost }:
                   Add Post
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Add New Post</DialogTitle>
+                  <DialogTitle className="flex items-center space-x-2">
+                    <Type className="h-5 w-5 text-purple-600" />
+                    <span>Add New Post</span>
+                    <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                      Draft
+                    </Badge>
+                  </DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="time">Time</Label>
-                    <Input
-                      id="time"
-                      type="time"
-                      value={formData.time}
-                      onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
-                    />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Post Creation Form */}
+                  <div className="space-y-6">
+                    {/* Image Upload */}
+                    <div>
+                      <Label htmlFor="image">Image</Label>
+                      <div className="mt-2">
+                        <input
+                          id="image"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="image"
+                          className="cursor-pointer block w-full h-48 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 transition-colors"
+                        >
+                          {imagePreview ? (
+                            <img
+                              src={imagePreview}
+                              alt="Preview"
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                              <Image className="h-8 w-8 mb-2" />
+                              <span className="text-sm">Click to upload image</span>
+                            </div>
+                          )}
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Caption */}
+                    <div>
+                      <Label htmlFor="caption">Caption</Label>
+                      <Textarea
+                        id="caption"
+                        placeholder="Write your Instagram caption here... Use #hashtags and @mentions"
+                        value={formData.caption}
+                        onChange={(e) => setFormData(prev => ({ ...prev, caption: e.target.value }))}
+                        className="mt-2 min-h-[120px]"
+                      />
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-sm text-gray-500">
+                          {formData.caption.length}/2200 characters
+                        </span>
+                        <Badge variant="outline" className="text-xs">
+                          {formData.caption.split(' ').filter(word => word.startsWith('#')).length} hashtags
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Time */}
+                    <div>
+                      <Label htmlFor="time">Time</Label>
+                      <Input
+                        id="time"
+                        type="time"
+                        value={formData.time}
+                        onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
+                        className="mt-2"
+                      />
+                    </div>
+
+                    {/* Suggested Times */}
+                    <div>
+                      <Label>Suggested Times</Label>
+                      <div className="grid grid-cols-2 gap-2 mt-2">
+                        {suggestedTimes.map((timeSlot) => (
+                          <Button
+                            key={timeSlot.time}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setFormData(prev => ({ ...prev, time: timeSlot.time }))}
+                            className="justify-start"
+                          >
+                            <span className="mr-2">{timeSlot.emoji}</span>
+                            {timeSlot.time} - {timeSlot.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="caption">Caption</Label>
-                    <Textarea
-                      id="caption"
-                      placeholder="Write your Instagram caption..."
-                      value={formData.caption}
-                      onChange={(e) => setFormData(prev => ({ ...prev, caption: e.target.value }))}
-                    />
+
+                  {/* Preview */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="flex items-center space-x-2">
+                        <Image className="h-4 w-4 text-purple-600" />
+                        <span>Preview</span>
+                      </Label>
+                    </div>
+                    <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
+                      {/* Instagram Post Header */}
+                      <div className="flex items-center space-x-3 p-4 border-b">
+                        <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full"></div>
+                        <div>
+                          <p className="font-semibold text-sm">your_username</p>
+                          <p className="text-xs text-gray-500">
+                            {selectedDate && formData.time
+                              ? `Scheduled for ${selectedDate.toLocaleDateString()}`
+                              : 'Not scheduled yet'
+                            }
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Image Preview */}
+                      <div className="aspect-square bg-gray-100 flex items-center justify-center">
+                        {imagePreview ? (
+                          <img
+                            src={imagePreview}
+                            alt="Post preview"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-center text-gray-400">
+                            <Image className="h-12 w-12 mx-auto mb-2" />
+                            <p className="text-sm">Image preview</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Caption Preview */}
+                      <div className="p-4">
+                        <p className="text-sm">
+                          <span className="font-semibold">your_username</span>{' '}
+                          {formData.caption || 'Your caption will appear here...'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Scheduling Info */}
+                    {selectedDate && formData.time && (
+                      <div className="p-4 bg-purple-50 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="h-4 w-4 text-purple-600" />
+                          <span className="text-sm font-medium text-purple-800">
+                            Scheduled for {new Date(`${selectedDate.toISOString().split('T')[0]}T${formData.time}`).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex space-x-2">
-                    <Button onClick={handleAddPost} className="flex-1">Add Post</Button>
-                    <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="flex-1">Cancel</Button>
-                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex space-x-3 mt-6">
+                  <Button onClick={handleAddPost} className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Schedule Post
+                  </Button>
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="flex-1">
+                    Cancel
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -244,39 +408,6 @@ const PostsList = ({ selectedDate, posts, onAddPost, onEditPost, onDeletePost }:
           )}
         </div>
       </CardContent>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Post</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="edit-time">Time</Label>
-              <Input
-                id="edit-time"
-                type="time"
-                value={formData.time}
-                onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-caption">Caption</Label>
-              <Textarea
-                id="edit-caption"
-                placeholder="Write your Instagram caption..."
-                value={formData.caption}
-                onChange={(e) => setFormData(prev => ({ ...prev, caption: e.target.value }))}
-              />
-            </div>
-            <div className="flex space-x-2">
-              <Button onClick={handleEditPost} className="flex-1">Update Post</Button>
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1">Cancel</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </Card>
   );
 };
