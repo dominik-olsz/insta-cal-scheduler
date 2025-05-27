@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Calendar, Plus, Instagram, Settings, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,23 +11,67 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isConnected, setIsConnected] = useState(false);
 
-  // Mock data for upcoming posts
-  const upcomingPosts = [
-    {
-      id: 1,
-      caption: "Beautiful sunset at the beach 🌅",
-      scheduledFor: "2024-05-27 18:00",
-      status: "scheduled",
-      image: "/placeholder.svg"
-    },
-    {
-      id: 2,
-      caption: "Coffee and productivity ☕️",
-      scheduledFor: "2024-05-28 09:00",
-      status: "scheduled",
-      image: "/placeholder.svg"
-    },
-  ];
+  // All scheduled posts data - same as in CalendarView
+  const scheduledPosts = {
+    '2025-05-28': [
+      { 
+        id: 1, 
+        time: '09:00', 
+        caption: 'Coffee and productivity ☕️ #coffee #morning #productivity', 
+        status: 'scheduled',
+        image: '/placeholder.svg'
+      }
+    ],
+    '2025-05-29': [
+      { 
+        id: 2, 
+        time: '18:00', 
+        caption: 'Beautiful sunset at the beach 🌅 #sunset #beach #nature', 
+        status: 'scheduled',
+        image: '/placeholder.svg'
+      },
+      { 
+        id: 3, 
+        time: '20:30', 
+        caption: 'Dinner with friends 🍽️ #foodie #friends #dinner', 
+        status: 'scheduled',
+        image: '/placeholder.svg'
+      }
+    ],
+    '2025-05-31': [
+      { 
+        id: 4, 
+        time: '12:00', 
+        caption: 'End of May celebration 🎉 #may #celebration #month', 
+        status: 'scheduled',
+        image: '/placeholder.svg'
+      }
+    ]
+  };
+
+  // Get all upcoming posts sorted by date and time
+  const getAllUpcomingPosts = () => {
+    const allPosts = [];
+    
+    for (const [date, posts] of Object.entries(scheduledPosts)) {
+      posts.forEach(post => {
+        allPosts.push({
+          ...post,
+          scheduledFor: `${date} ${post.time}`,
+          date: date
+        });
+      });
+    }
+    
+    // Sort by date and time
+    return allPosts.sort((a, b) => {
+      const dateA = new Date(`${a.date}T${a.time}`);
+      const dateB = new Date(`${b.date}T${b.time}`);
+      return dateA.getTime() - dateB.getTime();
+    });
+  };
+
+  const upcomingPosts = getAllUpcomingPosts();
 
   const renderContent = () => {
     switch (activeTab) {
@@ -48,7 +91,7 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-purple-100">Total Posts</p>
-                      <p className="text-2xl font-bold">24</p>
+                      <p className="text-2xl font-bold">{upcomingPosts.length}</p>
                     </div>
                     <Instagram className="h-8 w-8 text-purple-100" />
                   </div>
@@ -72,7 +115,7 @@ const Index = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-orange-100">This Week</p>
-                      <p className="text-2xl font-bold">8</p>
+                      <p className="text-2xl font-bold">{upcomingPosts.length}</p>
                     </div>
                     <Plus className="h-8 w-8 text-orange-100" />
                   </div>
@@ -106,17 +149,27 @@ const Index = () => {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Calendar className="h-5 w-5" />
-                  <span>Upcoming Posts</span>
+                  <span>All Upcoming Posts</span>
+                  {upcomingPosts.length > 0 && (
+                    <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                      {upcomingPosts.length} post{upcomingPosts.length !== 1 ? 's' : ''}
+                    </Badge>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-96 overflow-y-auto">
                   {upcomingPosts.map((post) => (
                     <div key={post.id} className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                       <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex-shrink-0"></div>
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{post.caption}</p>
-                        <p className="text-sm text-gray-500">Scheduled for {post.scheduledFor}</p>
+                        <p className="text-sm text-gray-500">
+                          Scheduled for {new Date(`${post.date}T${post.time}`).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })} at {post.time}
+                        </p>
                       </div>
                       <Badge variant="secondary" className="bg-green-100 text-green-800">
                         {post.status}
