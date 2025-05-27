@@ -38,7 +38,12 @@ const CalendarGrid = ({
             }
           }}
           components={{
-            Day: ({ date, displayMonth, ...dayProps }) => {
+            Day: ({ date, displayMonth, ...dayProps }: { 
+              date: Date; 
+              displayMonth: Date;
+              onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+              className?: string;
+            }) => {
               const postsCount = getPostsForDate(date).length;
               const hasPost = postsCount > 0;
               
