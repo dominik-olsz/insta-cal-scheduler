@@ -44,7 +44,17 @@ const CalendarGrid = ({
               
               return (
                 <div className="relative">
-                  <button {...dayProps}>
+                  <button 
+                    {...dayProps}
+                    onClick={(e) => {
+                      console.log('Day clicked:', date.toISOString().split('T')[0]);
+                      onDateSelect(date);
+                      if (dayProps.onClick) {
+                        dayProps.onClick(e);
+                      }
+                    }}
+                    className={dayProps.className}
+                  >
                     {date.getDate()}
                     {hasPost && (
                       <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
