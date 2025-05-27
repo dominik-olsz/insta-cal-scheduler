@@ -146,7 +146,7 @@ const CalendarView = () => {
         />
       </div>
 
-      <MonthlyOverview scheduledPosts={scheduledPosts} />
+      <MonthlyOverview scheduledPosts={scheduledPosts} currentMonth={currentMonth} />
     </div>
   );
 };
