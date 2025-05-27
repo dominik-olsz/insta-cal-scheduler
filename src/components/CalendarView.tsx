@@ -5,12 +5,20 @@ import CalendarGrid from './calendar/CalendarGrid';
 import PostsList from './calendar/PostsList';
 import MonthlyOverview from './calendar/MonthlyOverview';
 
+interface Post {
+  id: number;
+  time: string;
+  caption: string;
+  status: string;
+  image: string;
+}
+
 const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Mock scheduled posts data - updated to 2025 dates
-  const scheduledPosts = {
+  const [scheduledPosts, setScheduledPosts] = useState<Record<string, Post[]>>({
     '2025-05-27': [
       { 
         id: 1, 
@@ -79,19 +87,19 @@ const CalendarView = () => {
         image: '/placeholder.svg'
       }
     ]
-  };
+  });
 
   const getPostsForDate = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
     console.log('Getting posts for date:', dateString);
-    const posts = scheduledPosts[dateString as keyof typeof scheduledPosts] || [];
+    const posts = scheduledPosts[dateString] || [];
     console.log('Found posts:', posts);
     return posts;
   };
 
   const hasPostsOnDate = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
-    const hasPosts = scheduledPosts[dateString as keyof typeof scheduledPosts]?.length > 0;
+    const hasPosts = scheduledPosts[dateString]?.length > 0;
     console.log('Date:', dateString, 'has posts:', hasPosts);
     return hasPosts;
   };
@@ -111,6 +119,39 @@ const CalendarView = () => {
 
   const handleNextMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  };
+
+  const handleAddPost = (post: Omit<Post, 'id'>, date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    const newPost = {
+      ...post,
+      id: Date.now() // Simple ID generation
+    };
+    
+    setScheduledPosts(prev => ({
+      ...prev,
+      [dateString]: [...(prev[dateString] || []), newPost]
+    }));
+  };
+
+  const handleEditPost = (postId: number, updatedPost: Partial<Post>, date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    
+    setScheduledPosts(prev => ({
+      ...prev,
+      [dateString]: prev[dateString]?.map(post => 
+        post.id === postId ? { ...post, ...updatedPost } : post
+      ) || []
+    }));
+  };
+
+  const handleDeletePost = (postId: number, date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    
+    setScheduledPosts(prev => ({
+      ...prev,
+      [dateString]: prev[dateString]?.filter(post => post.id !== postId) || []
+    }));
   };
 
   return (
@@ -134,6 +175,9 @@ const CalendarView = () => {
         <PostsList
           selectedDate={selectedDate}
           posts={selectedDatePosts}
+          onAddPost={handleAddPost}
+          onEditPost={handleEditPost}
+          onDeletePost={handleDeletePost}
         />
       </div>
 

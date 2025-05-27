@@ -1,14 +1,27 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+interface Post {
+  id: number;
+  time: string;
+  caption: string;
+  status: string;
+  image: string;
+}
+
 interface MonthlyOverviewProps {
-  scheduledPosts: Record<string, any[]>;
+  scheduledPosts: Record<string, Post[]>;
 }
 
 const MonthlyOverview = ({ scheduledPosts }: MonthlyOverviewProps) => {
   const totalPosts = Object.values(scheduledPosts).flat().length;
-  const activeDays = Object.keys(scheduledPosts).length;
-  const maxPerDay = Math.max(...Object.values(scheduledPosts).map(posts => posts.length));
+  const activeDays = Object.keys(scheduledPosts).filter(date => scheduledPosts[date].length > 0).length;
+  const maxPerDay = Math.max(...Object.values(scheduledPosts).map(posts => posts.length), 0);
+  
+  // Calculate success rate based on scheduled vs published posts
+  const scheduledCount = Object.values(scheduledPosts).flat().filter(post => post.status === 'scheduled').length;
+  const publishedCount = Object.values(scheduledPosts).flat().filter(post => post.status === 'published').length;
+  const successRate = totalPosts > 0 ? Math.round(((scheduledCount + publishedCount) / totalPosts) * 100) : 0;
 
   return (
     <Card>
@@ -30,7 +43,7 @@ const MonthlyOverview = ({ scheduledPosts }: MonthlyOverviewProps) => {
             <p className="text-sm text-orange-700">Max per Day</p>
           </div>
           <div className="text-center p-4 bg-green-50 rounded-lg">
-            <p className="text-2xl font-bold text-green-600">92%</p>
+            <p className="text-2xl font-bold text-green-600">{successRate}%</p>
             <p className="text-sm text-green-700">Success Rate</p>
           </div>
         </div>
