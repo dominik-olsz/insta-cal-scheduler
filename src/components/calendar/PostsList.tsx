@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Instagram, Clock, Edit, Trash2, Plus, Image, Type } from 'lucide-react';
+import { Instagram, Clock, Edit, Trash2, Plus, Image, Type, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
