@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Instagram, Clock, Edit, Trash2, Plus, Image, Type, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
 interface Post {
-  id: number;
+  id: string;
   time: string;
   caption: string;
   status: string;
@@ -22,8 +21,8 @@ interface PostsListProps {
   selectedDate: Date | undefined;
   posts: Post[];
   onAddPost: (post: Omit<Post, 'id'>, date: Date) => void;
-  onEditPost: (postId: number, updatedPost: Partial<Post>, date: Date) => void;
-  onDeletePost: (postId: number, date: Date) => void;
+  onEditPost: (postId: string, updatedPost: Partial<Post>, date: Date) => void;
+  onDeletePost: (postId: string, date: Date) => void;
 }
 
 const PostsList = ({ selectedDate, posts, onAddPost, onEditPost, onDeletePost }: PostsListProps) => {
@@ -120,7 +119,7 @@ const PostsList = ({ selectedDate, posts, onAddPost, onEditPost, onDeletePost }:
     setEditingPost(null);
   };
 
-  const handleDeletePost = (postId: number) => {
+  const handleDeletePost = (postId: string) => {
     if (!selectedDate) return;
     
     onDeletePost(postId, selectedDate);
