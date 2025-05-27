@@ -75,15 +75,22 @@ const CalendarView = () => {
 
   const getPostsForDate = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
-    return scheduledPosts[dateString as keyof typeof scheduledPosts] || [];
+    console.log('Getting posts for date:', dateString);
+    const posts = scheduledPosts[dateString as keyof typeof scheduledPosts] || [];
+    console.log('Found posts:', posts);
+    return posts;
   };
 
   const hasPostsOnDate = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
-    return scheduledPosts[dateString as keyof typeof scheduledPosts]?.length > 0;
+    const hasPosts = scheduledPosts[dateString as keyof typeof scheduledPosts]?.length > 0;
+    console.log('Date:', dateString, 'has posts:', hasPosts);
+    return hasPosts;
   };
 
   const selectedDatePosts = selectedDate ? getPostsForDate(selectedDate) : [];
+  console.log('Selected date:', selectedDate?.toISOString().split('T')[0]);
+  console.log('Selected date posts:', selectedDatePosts);
 
   return (
     <div className="space-y-6">
