@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import CalendarHeader from './calendar/CalendarHeader';
 import CalendarGrid from './calendar/CalendarGrid';
@@ -17,72 +16,38 @@ const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  // Mock scheduled posts data - updated to 2025 dates
+  // Mock scheduled posts data - updated to show only 3 active days in May 2025
   const [scheduledPosts, setScheduledPosts] = useState<Record<string, Post[]>>({
-    '2025-05-27': [
-      { 
-        id: 1, 
-        time: '18:00', 
-        caption: 'Beautiful sunset at the beach 🌅 #sunset #beach #nature', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      },
-      { 
-        id: 2, 
-        time: '20:30', 
-        caption: 'Dinner with friends 🍽️ #foodie #friends #dinner', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      }
-    ],
     '2025-05-28': [
       { 
-        id: 3, 
+        id: 1, 
         time: '09:00', 
         caption: 'Coffee and productivity ☕️ #coffee #morning #productivity', 
         status: 'scheduled',
         image: '/placeholder.svg'
       }
     ],
-    '2025-05-30': [
+    '2025-05-29': [
       { 
-        id: 4, 
-        time: '15:00', 
-        caption: 'Weekend vibes 🌟 #weekend #relax #goodvibes', 
+        id: 2, 
+        time: '18:00', 
+        caption: 'Beautiful sunset at the beach 🌅 #sunset #beach #nature', 
         status: 'scheduled',
         image: '/placeholder.svg'
       },
       { 
-        id: 5, 
-        time: '19:00', 
-        caption: 'Movie night 🎬 #movies #entertainment #friday', 
+        id: 3, 
+        time: '20:30', 
+        caption: 'Dinner with friends 🍽️ #foodie #friends #dinner', 
         status: 'scheduled',
         image: '/placeholder.svg'
       }
     ],
     '2025-05-31': [
       { 
-        id: 6, 
+        id: 4, 
         time: '12:00', 
-        caption: 'Lunch break special 🥗 #healthy #lunch #nutrition', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      }
-    ],
-    '2025-06-01': [
-      { 
-        id: 7, 
-        time: '16:00', 
-        caption: 'New month, new goals! 🎯 #goals #motivation #june', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      }
-    ],
-    '2025-06-05': [
-      { 
-        id: 8, 
-        time: '14:00', 
-        caption: 'Thursday vibes 💪 #thursday #motivation #work', 
+        caption: 'End of May celebration 🎉 #may #celebration #month', 
         status: 'scheduled',
         image: '/placeholder.svg'
       }
