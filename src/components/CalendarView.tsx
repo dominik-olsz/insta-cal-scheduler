@@ -1,11 +1,13 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import CalendarHeader from './calendar/CalendarHeader';
 import CalendarGrid from './calendar/CalendarGrid';
 import PostsList from './calendar/PostsList';
 import MonthlyOverview from './calendar/MonthlyOverview';
+import { usePosts } from '@/hooks/usePosts';
 
 interface Post {
-  id: number;
+  id: string;
   time: string;
   caption: string;
   status: string;
@@ -15,44 +17,36 @@ interface Post {
 const CalendarView = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const { posts, loading } = usePosts();
 
-  // Mock scheduled posts data - updated to show only 3 active days in May 2025
-  const [scheduledPosts, setScheduledPosts] = useState<Record<string, Post[]>>({
-    '2025-05-28': [
-      { 
-        id: 1, 
-        time: '09:00', 
-        caption: 'Coffee and productivity ☕️ #coffee #morning #productivity', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      }
-    ],
-    '2025-05-29': [
-      { 
-        id: 2, 
-        time: '18:00', 
-        caption: 'Beautiful sunset at the beach 🌅 #sunset #beach #nature', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      },
-      { 
-        id: 3, 
-        time: '20:30', 
-        caption: 'Dinner with friends 🍽️ #foodie #friends #dinner', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      }
-    ],
-    '2025-05-31': [
-      { 
-        id: 4, 
-        time: '12:00', 
-        caption: 'End of May celebration 🎉 #may #celebration #month', 
-        status: 'scheduled',
-        image: '/placeholder.svg'
-      }
-    ]
-  });
+  // Convert database posts to the format expected by the calendar components
+  const [scheduledPosts, setScheduledPosts] = useState<Record<string, Post[]>>({});
+
+  useEffect(() => {
+    if (posts.length > 0) {
+      const postsMap: Record<string, Post[]> = {};
+      
+      posts.forEach(post => {
+        const date = new Date(post.scheduled_for);
+        const dateString = date.toISOString().split('T')[0];
+        const time = date.toTimeString().slice(0, 5);
+        
+        if (!postsMap[dateString]) {
+          postsMap[dateString] = [];
+        }
+        
+        postsMap[dateString].push({
+          id: post.id,
+          time: time,
+          caption: post.caption,
+          status: post.status,
+          image: post.image_url || '/placeholder.svg'
+        });
+      });
+      
+      setScheduledPosts(postsMap);
+    }
+  }, [posts]);
 
   const getPostsForDate = (date: Date) => {
     const dateString = date.toISOString().split('T')[0];
@@ -87,37 +81,28 @@ const CalendarView = () => {
   };
 
   const handleAddPost = (post: Omit<Post, 'id'>, date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
-    const newPost = {
-      ...post,
-      id: Date.now() // Simple ID generation
-    };
-    
-    setScheduledPosts(prev => ({
-      ...prev,
-      [dateString]: [...(prev[dateString] || []), newPost]
-    }));
+    // This would integrate with the real post creation
+    console.log('Add post:', post, 'for date:', date);
   };
 
   const handleEditPost = (postId: number, updatedPost: Partial<Post>, date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
-    
-    setScheduledPosts(prev => ({
-      ...prev,
-      [dateString]: prev[dateString]?.map(post => 
-        post.id === postId ? { ...post, ...updatedPost } : post
-      ) || []
-    }));
+    // This would integrate with the real post editing
+    console.log('Edit post:', postId, updatedPost, 'for date:', date);
   };
 
   const handleDeletePost = (postId: number, date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
-    
-    setScheduledPosts(prev => ({
-      ...prev,
-      [dateString]: prev[dateString]?.filter(post => post.id !== postId) || []
-    }));
+    // This would integrate with the real post deletion
+    console.log('Delete post:', postId, 'for date:', date);
   };
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+        <p className="mt-2 text-gray-600">Loading calendar...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

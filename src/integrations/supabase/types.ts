@@ -9,7 +9,149 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      instagram_accounts: {
+        Row: {
+          access_token: string
+          connected_at: string | null
+          expires_at: string | null
+          id: string
+          instagram_user_id: string
+          is_active: boolean | null
+          user_id: string
+          username: string
+        }
+        Insert: {
+          access_token: string
+          connected_at?: string | null
+          expires_at?: string | null
+          id?: string
+          instagram_user_id: string
+          is_active?: boolean | null
+          user_id: string
+          username: string
+        }
+        Update: {
+          access_token?: string
+          connected_at?: string | null
+          expires_at?: string | null
+          id?: string
+          instagram_user_id?: string
+          is_active?: boolean | null
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      media_uploads: {
+        Row: {
+          file_path: string
+          file_size: number | null
+          filename: string
+          id: string
+          mime_type: string | null
+          uploaded_at: string | null
+          user_id: string
+        }
+        Insert: {
+          file_path: string
+          file_size?: number | null
+          filename: string
+          id?: string
+          mime_type?: string | null
+          uploaded_at?: string | null
+          user_id: string
+        }
+        Update: {
+          file_path?: string
+          file_size?: number | null
+          filename?: string
+          id?: string
+          mime_type?: string | null
+          uploaded_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          caption: string
+          created_at: string | null
+          error_message: string | null
+          id: string
+          image_url: string | null
+          instagram_account_id: string | null
+          instagram_media_id: string | null
+          scheduled_for: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          caption: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          image_url?: string | null
+          instagram_account_id?: string | null
+          instagram_media_id?: string | null
+          scheduled_for: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          image_url?: string | null
+          instagram_account_id?: string | null
+          instagram_media_id?: string | null
+          scheduled_for?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_instagram_account_id_fkey"
+            columns: ["instagram_account_id"]
+            isOneToOne: false
+            referencedRelation: "instagram_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          timezone: string | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          timezone?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          timezone?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
