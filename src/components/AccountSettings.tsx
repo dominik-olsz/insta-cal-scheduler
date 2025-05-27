@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Instagram, Eye, EyeOff, Check, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 
 interface AccountSettingsProps {
@@ -14,11 +14,54 @@ interface AccountSettingsProps {
   setIsConnected: (connected: boolean) => void;
 }
 
+const timezones = [
+  { value: 'UTC-12:00', label: 'UTC-12:00 (Baker Island)' },
+  { value: 'UTC-11:00', label: 'UTC-11:00 (American Samoa)' },
+  { value: 'UTC-10:00', label: 'UTC-10:00 (Hawaii)' },
+  { value: 'UTC-09:30', label: 'UTC-09:30 (Marquesas Islands)' },
+  { value: 'UTC-09:00', label: 'UTC-09:00 (Alaska)' },
+  { value: 'UTC-08:00', label: 'UTC-08:00 (Pacific Time)' },
+  { value: 'UTC-07:00', label: 'UTC-07:00 (Mountain Time)' },
+  { value: 'UTC-06:00', label: 'UTC-06:00 (Central Time)' },
+  { value: 'UTC-05:00', label: 'UTC-05:00 (Eastern Time)' },
+  { value: 'UTC-04:00', label: 'UTC-04:00 (Atlantic Time)' },
+  { value: 'UTC-03:30', label: 'UTC-03:30 (Newfoundland)' },
+  { value: 'UTC-03:00', label: 'UTC-03:00 (Argentina, Brazil)' },
+  { value: 'UTC-02:00', label: 'UTC-02:00 (South Georgia)' },
+  { value: 'UTC-01:00', label: 'UTC-01:00 (Azores)' },
+  { value: 'UTC+00:00', label: 'UTC+00:00 (GMT, London)' },
+  { value: 'UTC+01:00', label: 'UTC+01:00 (Central European Time)' },
+  { value: 'UTC+02:00', label: 'UTC+02:00 (Eastern European Time)' },
+  { value: 'UTC+03:00', label: 'UTC+03:00 (Moscow, East Africa)' },
+  { value: 'UTC+03:30', label: 'UTC+03:30 (Iran)' },
+  { value: 'UTC+04:00', label: 'UTC+04:00 (Gulf, Samara)' },
+  { value: 'UTC+04:30', label: 'UTC+04:30 (Afghanistan)' },
+  { value: 'UTC+05:00', label: 'UTC+05:00 (Pakistan, West Asia)' },
+  { value: 'UTC+05:30', label: 'UTC+05:30 (India, Sri Lanka)' },
+  { value: 'UTC+05:45', label: 'UTC+05:45 (Nepal)' },
+  { value: 'UTC+06:00', label: 'UTC+06:00 (Bangladesh, Central Asia)' },
+  { value: 'UTC+06:30', label: 'UTC+06:30 (Myanmar)' },
+  { value: 'UTC+07:00', label: 'UTC+07:00 (Thailand, Vietnam)' },
+  { value: 'UTC+08:00', label: 'UTC+08:00 (China, Singapore)' },
+  { value: 'UTC+08:30', label: 'UTC+08:30 (North Korea)' },
+  { value: 'UTC+08:45', label: 'UTC+08:45 (Eucla)' },
+  { value: 'UTC+09:00', label: 'UTC+09:00 (Japan, Korea)' },
+  { value: 'UTC+09:30', label: 'UTC+09:30 (Adelaide)' },
+  { value: 'UTC+10:00', label: 'UTC+10:00 (Sydney, Vladivostok)' },
+  { value: 'UTC+10:30', label: 'UTC+10:30 (Lord Howe Island)' },
+  { value: 'UTC+11:00', label: 'UTC+11:00 (Solomon Islands)' },
+  { value: 'UTC+12:00', label: 'UTC+12:00 (Fiji, New Zealand)' },
+  { value: 'UTC+12:45', label: 'UTC+12:45 (Chatham Islands)' },
+  { value: 'UTC+13:00', label: 'UTC+13:00 (Tonga, Samoa)' },
+  { value: 'UTC+14:00', label: 'UTC+14:00 (Line Islands)' },
+];
+
 const AccountSettings = ({ isConnected, setIsConnected }: AccountSettingsProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTimezone, setSelectedTimezone] = useState('UTC-08:00');
   const { toast } = useToast();
 
   const handleConnect = async () => {
@@ -177,12 +220,18 @@ const AccountSettings = ({ isConnected, setIsConnected }: AccountSettingsProps) 
           <CardContent className="space-y-4">
             <div>
               <Label>Time Zone</Label>
-              <select className="w-full mt-2 p-2 border rounded-md">
-                <option>UTC-8 (Pacific Time)</option>
-                <option>UTC-5 (Eastern Time)</option>
-                <option>UTC+0 (GMT)</option>
-                <option>UTC+1 (Central European Time)</option>
-              </select>
+              <Select value={selectedTimezone} onValueChange={setSelectedTimezone}>
+                <SelectTrigger className="w-full mt-2">
+                  <SelectValue placeholder="Select your timezone" />
+                </SelectTrigger>
+                <SelectContent>
+                  {timezones.map((timezone) => (
+                    <SelectItem key={timezone.value} value={timezone.value}>
+                      {timezone.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
