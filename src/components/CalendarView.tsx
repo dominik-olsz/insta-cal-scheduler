@@ -130,13 +130,13 @@ const CalendarView = () => {
                 }
               }}
               components={{
-                Day: ({ date, ...props }) => {
+                Day: ({ date, displayMonth, ...dayProps }) => {
                   const postsCount = getPostsForDate(date).length;
                   const hasPost = postsCount > 0;
                   
                   return (
                     <div className="relative">
-                      <button {...props} className={props.className}>
+                      <button {...dayProps}>
                         {date.getDate()}
                         {hasPost && (
                           <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2">
