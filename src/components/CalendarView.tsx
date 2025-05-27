@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -100,6 +101,11 @@ const CalendarView = () => {
   console.log('Selected date:', selectedDate?.toISOString().split('T')[0]);
   console.log('Selected date posts:', selectedDatePosts);
 
+  const handleDateSelect = (date: Date | undefined) => {
+    console.log('Date selected:', date?.toISOString().split('T')[0]);
+    setSelectedDate(date);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -132,7 +138,7 @@ const CalendarView = () => {
             <Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={setSelectedDate}
+              onSelect={handleDateSelect}
               month={currentMonth}
               onMonthChange={setCurrentMonth}
               className="rounded-md border-0"
